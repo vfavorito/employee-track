@@ -12,7 +12,6 @@ const connection = mysql.createConnection({
 
 connection.connect((error) => {
     if (error) throw error;
-    start();
 });
 
 let roleArray = [];
@@ -87,11 +86,11 @@ const addDepartment = async () => {
                 if (error) throw error;
                 console.log("Department Added!");
             });
-        })
+        });
     }
     catch (error) {
         throw error
-    }
+    };
 };
 const addRole = async () => {
     try {
@@ -217,7 +216,7 @@ const viewRole = async () => {
     };
 };
 
-let query = "SELECT employee.id AS 'ID', employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title AS 'Title', department.name AS 'Department', role.salary AS 'Salary', employee.manager_id AS 'Manager_ID' " 
+let query = "SELECT employee.id AS 'ID', employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title AS 'Title', department.name AS 'Department', role.salary AS 'Salary', employee.manager_id AS 'Manager_ID' "
 query += "FROM employee "
 query += "INNER JOIN role ON employee.role_id=role.id "
 query += "INNER JOIN department ON role.department_id=department.id;"
@@ -227,10 +226,61 @@ const viewEmployee = async () => {
         connection.query(query, function (error, results) {
             if (error) throw error;
             console.table(results);
-        })
+        });
     }
     catch (error) {
         throw error;
     };
 };
 
+const updateEmployeeRole = async () => {
+    try {
+        inquirer.prompt([{
+            name: "employees",
+            type: "list",
+            message: "Which Employee would you like to update?",
+            choices: () => employeeArray.map((employee) => { return (employee.first_name + " " + employee.last_name) })
+        },
+        {
+            name: "newRole",
+            type: "list",
+            message: "What is this employee's new role?",
+            choices: () => roleArray.map((role) => { return role.title })
+        }]).then(async (responses) => {
+            let roleID;
+            const getRoleID = async () => {
+                roleArray.forEach((role) => {
+                    if (role.title === responses.newRole) {
+                        roleID = parseInt(role.id);
+                    };
+                });
+            };
+            let employeeID;
+            const getEmployeeID = async () => {
+                employeeArray.forEach((employee) => {
+                    if ((employee.first_name + " " + employee.last_name) === responses.employees) {
+                        employeeID = parseInt(employee.id);
+                    };
+                });
+            };
+            await getRoleID();
+            await getEmployeeID();
+            connection.query("UPDATE employee SET ? WHERE ?", [{ role_id: roleID }, { id: employeeID }], function (error, result) {
+                if (error) throw error;
+                console.log("employee updated")
+            });
+        });
+    }
+    catch (error) {
+        throw error;
+    };
+};
+const main = async () => {
+    try{
+        await start();
+    }
+    catch (error){
+        throw error;
+    };
+};
+main();
