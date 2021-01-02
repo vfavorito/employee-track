@@ -116,3 +116,15 @@ function viewRole() {
         console.table(results);
     });
 };
+
+let query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS 'Department', role.salary, employee.manager_id " 
+query += "FROM employee "
+query += "INNER JOIN role ON employee.role_id=role.id "
+query += "INNER JOIN department ON role.department_id=department.id;"
+
+function viewEmployee() {
+    connection.query(query, function (error, results){
+      if (error) throw error;
+      console.table(results)
+    });
+  };
