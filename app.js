@@ -110,3 +110,9 @@ function viewDepartment() {
         console.table(results);
     });
 };
+function viewRole() {
+    connection.query("SELECT * FROM role", function (error, results) {
+        if (error) throw error;
+        console.table(results);
+    });
+};
