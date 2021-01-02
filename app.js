@@ -1,5 +1,6 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
+const cTable = require("console.table");
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -216,7 +217,7 @@ const viewRole = async () => {
     };
 };
 
-let query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS 'Department', role.salary, employee.manager_id " 
+let query = "SELECT employee.id AS 'ID', employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title AS 'Title', department.name AS 'Department', role.salary AS 'Salary', employee.manager_id AS 'Manager_ID' " 
 query += "FROM employee "
 query += "INNER JOIN role ON employee.role_id=role.id "
 query += "INNER JOIN department ON role.department_id=department.id;"
