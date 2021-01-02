@@ -134,6 +134,64 @@ const addRole = async () => {
         throw error
     };
 };
+const addEmployee = async () => {
+    try {
+        await inquirer.prompt([{
+            name: "firstName",
+            type: "input",
+            message: "What is this employee's first name?"
+        },
+        {
+            name: "lastName",
+            type: "input",
+            message: "What is the employee's last name?"
+        },
+        {
+            name: "role",
+            type: "list",
+            message: "What role does this employee have?",
+            choices: () => roleArray.map((role) => { return role.title })
+        },
+        {
+            name: "manager",
+            type: "list",
+            message: "Who is this employee's manager?",
+            choices: () => employeeArray.map((employee) => { return (employee.first_name + " " + employee.last_name) })
+        }]).then(async (responses) => {
+            let roleID;
+            const getRoleID = async () => {
+                roleArray.forEach((role) => {
+                    if (role.title === responses.role) {
+                        roleID = parseInt(role.id);
+                    };
+                });
+            };
+            let managerID;
+            const getManagerID = async () => {
+                employeeArray.forEach((employee) => {
+                    if ((employee.first_name + " " + employee.last_name) === responses.manager) {
+                        managerID = parseInt(employee.id);
+                    };
+                });
+            };
+            await getRoleID();
+            await getManagerID();
+            connection.query("INSERT INTO employee SET ?", {
+                "first_name": responses.firstName,
+                "last_name": responses.lastName,
+                "role_id": roleID,
+                "manager_id": managerID
+
+            }, function (error, result) {
+                if (error) throw error;
+                console.log("Employee Added!");
+            });
+        })
+    }
+    catch (error) {
+        throw error
+    };
+};
 
 const viewDepartment = async () => {
     try {
@@ -157,57 +215,21 @@ const viewRole = async () => {
         throw error
     };
 };
-const addEmployee = async () => {
-    await inquirer.prompt([{
-        name: "firstName",
-        type: "input",
-        message: "What is this employee's first name?"
-    },
-    {
-        name: "lastName",
-        type: "input",
-        message: "What is the employee's last name?"
-    },
-    {
-        name: "role",
-        type: "list",
-        message: "What role does this employee have?",
-        choices: () => roleArray.map((role) => { return role.title })
-    },
-    {
-        name: "manager",
-        type: "list",
-        message: "Who is this employee's manager?",
-        choices: () => employeeArray.map((employee) => { return (employee.first_name + " " + employee.last_name) })
-    }]).then(async (responses) => {
-        let roleID;
-        const getRoleID = async () => {
-            roleArray.forEach((role) => {
-                if (role.title === responses.role) {
-                    roleID = parseInt(role.id);
-                };
-            });
-        };
-        let managerID;
-        const getManagerID = async () => {
-            employeeArray.forEach((employee) => {
-                if ((employee.first_name + " " + employee.last_name) === responses.manager) {
-                    managerID = parseInt(employee.id);
-                };
-            });
-        };
-        await getRoleID();
-        await getManagerID();
-        connection.query("INSERT INTO employee SET ?", {
-            "first_name": responses.firstName,
-            "last_name": responses.lastName,
-            "role_id": roleID,
-            "manager_id": managerID
 
-        }, function (error, result) {
+let query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS 'Department', role.salary, employee.manager_id " 
+query += "FROM employee "
+query += "INNER JOIN role ON employee.role_id=role.id "
+query += "INNER JOIN department ON role.department_id=department.id;"
+
+const viewEmployee = async () => {
+    try {
+        connection.query(query, function (error, results) {
             if (error) throw error;
-            console.log("Employee Added!");
-        });
-    })
+            console.table(results);
+        })
+    }
+    catch (error) {
+        throw error;
+    };
 };
 
