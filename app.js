@@ -40,33 +40,34 @@ const refreshData = async () => {
 
 const start = async () => {
     try {
+        await refreshData();
         await inquirer.prompt({
             name: "action",
             type: "list",
             message: "What would you like to do?",
             choices: ["Add a Department", "Add a Role", "Add an Employee", "View All Departments", "View All Roles", "View All Employees", "Update Employee Role"]
-        }).then((response) => {
+        }).then(async (response) => {
             switch (response.action) {
                 case "Add a Department":
-                    addDepartment();
+                    await addDepartment();
                     break;
                 case "Add a Role":
-                    addRole();
+                    await addRole();
                     break;
                 case "Add an Employee":
-                    addEmployee();
+                    await addEmployee();
                     break;
                 case "View All Departments":
-                    viewDepartment();
+                    await viewDepartment();
                     break;
                 case "View All Roles":
-                    viewRole();
+                    await viewRole();
                     break;
                 case "View All Employees":
-                    viewEmployee();
+                    await viewEmployee();
                     break;
                 case "Update Employee Role":
-                    updateEmployeeRole();
+                    await updateEmployeeRole();
             };
         });
     }
@@ -80,7 +81,7 @@ const addDepartment = async () => {
             name: "department",
             type: "input",
             message: "What is the name of the department you would like to add?"
-        }).then((result) => {
+        }).then(async (result) => {
             connection.query("INSERT INTO department SET ?", { "name": result.department }, function (error, result) {
                 if (error) throw error;
                 console.log("Department Added!");
@@ -109,7 +110,7 @@ const addRole = async () => {
             message: "What department does this role belong to?",
             choices: () => departmentArray.map((department) => { return department.name })
         }
-        ]).then((responses) => {
+        ]).then(async (responses) => {
             let depID;
             const getDepID = async () => {
                 departmentArray.forEach((department) => {
@@ -118,8 +119,7 @@ const addRole = async () => {
                     };
                 });
             };
-            await refreshData();
-            await getdepID();
+            await getDepID();
             connection.query("INSERT INTO role SET ?", {
                 "title": responses.title,
                 "salary": responses.salary,
@@ -156,5 +156,58 @@ const viewRole = async () => {
     catch (error) {
         throw error
     };
+};
+const addEmployee = async () => {
+    await inquirer.prompt([{
+        name: "firstName",
+        type: "input",
+        message: "What is this employee's first name?"
+    },
+    {
+        name: "lastName",
+        type: "input",
+        message: "What is the employee's last name?"
+    },
+    {
+        name: "role",
+        type: "list",
+        message: "What role does this employee have?",
+        choices: () => roleArray.map((role) => { return role.title })
+    },
+    {
+        name: "manager",
+        type: "list",
+        message: "Who is this employee's manager?",
+        choices: () => employeeArray.map((employee) => { return (employee.first_name + " " + employee.last_name) })
+    }]).then(async (responses) => {
+        let roleID;
+        const getRoleID = async () => {
+            roleArray.forEach((role) => {
+                if (role.title === responses.role) {
+                    roleID = parseInt(role.id);
+                };
+            });
+        };
+        let managerID;
+        const getManagerID = async () => {
+            employeeArray.forEach((employee) => {
+                if ((employee.first_name + " " + employee.last_name) === responses.manager) {
+                    managerID = parseInt(employee.id);
+                };
+            });
+        };
+        await getRoleID();
+        await getManagerID();
+        connection.query("INSERT INTO employee SET ?", {
+            "first_name": responses.firstName,
+            "last_name": responses.lastName,
+            "role_id": roleID,
+            "manager_id": managerID
+
+        }, function (error, result) {
+            if (error) throw error;
+            console.log("Employee Added!");
+        });
+    })
 };
 
