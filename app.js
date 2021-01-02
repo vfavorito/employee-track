@@ -84,7 +84,7 @@ function addRole() {
         }
         ]).then(function (responses) {
             let depID;
-            let getID = function() {
+            let getID = function () {
                 result.forEach((department) => {
                     if (department.name === responses.departmentChoice) {
                         depID = parseInt(department.id)
@@ -103,4 +103,10 @@ function addRole() {
         });
     }
     )
+};
+function viewDepartment() {
+    connection.query("SELECT * FROM department", function (error, results) {
+        if (error) throw error;
+        console.table(results);
+    });
 };
