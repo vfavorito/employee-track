@@ -9,58 +9,91 @@ const connection = mysql.createConnection({
     database: "employee_tracker_db"
 });
 
-connection.connect(function (error) {
+connection.connect((error) => {
     if (error) throw error;
     start();
 });
 
-function start() {
-    inquirer.prompt({
-        name: "action",
-        type: "list",
-        message: "What would you like to do?",
-        choices: ["Add a Department", "Add a Role", "Add an Employee", "View All Departments", "View All Roles", "View All Employees", "Update Employee Role"]
-    }).then(function (response) {
-        switch (response.action) {
-            case "Add a Department":
-                addDepartment();
-                break;
-            case "Add a Role":
-                addRole();
-                break;
-            case "Add an Employee":
-                addEmployee();
-                break;
-            case "View All Departments":
-                viewDepartment();
-                break;
-            case "View All Roles":
-                viewRole();
-                break;
-            case "View All Employees":
-                viewEmployee();
-                break;
-            case "Update Employee Role":
-                updateEmployeeRole();
-        }
-    });
-};
-function addDepartment() {
-    inquirer.prompt({
-        name: "department",
-        type: "input",
-        message: "What is the name of the department you would like to add?"
-    }).then(function (result) {
-        connection.query("INSERT INTO department SET ?", { "name": result.department }, function (error, result) {
+let roleArray = [];
+let departmentArray = [];
+let employeeArray = [];
+
+const refreshData = async () => {
+    try {
+        connection.query("SELECT * FROM role", function (error, result) {
             if (error) throw error;
-            console.log("Department Added!");
+            result.forEach(role => roleArray.push(role));
         });
-    });
+        connection.query("SELECT * FROM department", function (error, result) {
+            if (error) throw error;
+            result.forEach(department => departmentArray.push(department));
+        });
+        connection.query("SELECT * FROM employee", function (error, result) {
+            if (error) throw error;
+            result.forEach(employee => employeeArray.push(employee));
+        })
+    }
+    catch (error) {
+        throw error;
+    }
+}
+
+const start = async () => {
+    try {
+        await inquirer.prompt({
+            name: "action",
+            type: "list",
+            message: "What would you like to do?",
+            choices: ["Add a Department", "Add a Role", "Add an Employee", "View All Departments", "View All Roles", "View All Employees", "Update Employee Role"]
+        }).then((response) => {
+            switch (response.action) {
+                case "Add a Department":
+                    addDepartment();
+                    break;
+                case "Add a Role":
+                    addRole();
+                    break;
+                case "Add an Employee":
+                    addEmployee();
+                    break;
+                case "View All Departments":
+                    viewDepartment();
+                    break;
+                case "View All Roles":
+                    viewRole();
+                    break;
+                case "View All Employees":
+                    viewEmployee();
+                    break;
+                case "Update Employee Role":
+                    updateEmployeeRole();
+            };
+        });
+    }
+    catch (error) {
+        throw error;
+    };
 };
-function addRole() {
-    connection.query("SELECT * FROM department", function (error, result) {
-        if (error) throw error;
-        inquirer.prompt([{
+const addDepartment = async () => {
+    try {
+        await inquirer.prompt({
+            name: "department",
+            type: "input",
+            message: "What is the name of the department you would like to add?"
+        }).then((result) => {
+            connection.query("INSERT INTO department SET ?", { "name": result.department }, function (error, result) {
+                if (error) throw error;
+                console.log("Department Added!");
+            });
+        })
+    }
+    catch (error) {
+        throw error
+    }
+};
+const addRole = async () => {
+    try {
+        await inquirer.prompt([{
             name: "title",
             type: "input",
             message: "What is the title of the role you want to add?"
@@ -74,24 +107,19 @@ function addRole() {
             name: "departmentChoice",
             type: "list",
             message: "What department does this role belong to?",
-            choices: function () {
-                const departmentArray = [];
-                for (let i = 0; i < result.length; i++) {
-                    departmentArray.push(result[i].name);
-                }
-                return departmentArray;
-            }
+            choices: () => departmentArray.map((department) => { return department.name })
         }
-        ]).then(function (responses) {
+        ]).then((responses) => {
             let depID;
-            let getID = function () {
-                result.forEach((department) => {
+            const getDepID = async () => {
+                departmentArray.forEach((department) => {
                     if (department.name === responses.departmentChoice) {
                         depID = parseInt(department.id)
                     };
                 });
             };
-            getID();
+            await refreshData();
+            await getdepID();
             connection.query("INSERT INTO role SET ?", {
                 "title": responses.title,
                 "salary": responses.salary,
@@ -102,29 +130,31 @@ function addRole() {
             });
         });
     }
-    )
-};
-function viewDepartment() {
-    connection.query("SELECT * FROM department", function (error, results) {
-        if (error) throw error;
-        console.table(results);
-    });
-};
-function viewRole() {
-    connection.query("SELECT * FROM role", function (error, results) {
-        if (error) throw error;
-        console.table(results);
-    });
+    catch (error) {
+        throw error
+    };
 };
 
-let query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS 'Department', role.salary, employee.manager_id " 
-query += "FROM employee "
-query += "INNER JOIN role ON employee.role_id=role.id "
-query += "INNER JOIN department ON role.department_id=department.id;"
+const viewDepartment = async () => {
+    try {
+        connection.query("SELECT * FROM department", function (error, results) {
+            if (error) throw error;
+            console.table(results);
+        })
+    }
+    catch (error) {
+        throw error
+    };
+};
+const viewRole = async () => {
+    try {
+        connection.query("SELECT * FROM role", function (error, results) {
+            if (error) throw error;
+            console.table(results);
+        })
+    }
+    catch (error) {
+        throw error
+    };
+};
 
-function viewEmployee() {
-    connection.query(query, function (error, results){
-      if (error) throw error;
-      console.table(results)
-    });
-  };
