@@ -45,7 +45,7 @@ const start = async () => {
             name: "action",
             type: "list",
             message: "What would you like to do?",
-            choices: ["Add a Department", "Add a Role", "Add an Employee", "View All Departments", "View All Roles", "View All Employees", "Update Employee Role","End Connection"]
+            choices: ["Add a Department", "Add a Role", "Add an Employee", "View All Departments", "View All Roles", "View All Employees", "Update Employee Role", "End Connection"]
         }).then(async (response) => {
             switch (response.action) {
                 case "Add a Department":
@@ -86,7 +86,7 @@ const addDepartment = async () => {
         }).then(async (result) => {
             connection.query("INSERT INTO department SET ?", { "name": result.department }, function (error, result) {
                 if (error) throw error;
-                console.log("Department Added!");
+                console.log("---- A Department Has Been Added! ----");
                 start();
             });
         });
@@ -129,7 +129,7 @@ const addRole = async () => {
                 "department_id": depID
             }, function (error, result) {
                 if (error) throw error;
-                console.log("Role Added!");
+                console.log("---- A Role Has Been Added! ----");
                 start();
             });
         });
@@ -188,7 +188,7 @@ const addEmployee = async () => {
 
             }, function (error, result) {
                 if (error) throw error;
-                console.log("Employee Added!");
+                console.log("---- An Employee Has Been Added! ----");
                 start();
             });
         })
@@ -275,7 +275,7 @@ const updateEmployeeRole = async () => {
             await getEmployeeID();
             connection.query("UPDATE employee SET ? WHERE ?", [{ role_id: roleID }, { id: employeeID }], function (error, result) {
                 if (error) throw error;
-                console.log("employee updated");
+                console.log("---- An Employee Has Been Updated ----");
                 start();
             });
         });
