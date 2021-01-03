@@ -85,6 +85,7 @@ const addDepartment = async () => {
             connection.query("INSERT INTO department SET ?", { "name": result.department }, function (error, result) {
                 if (error) throw error;
                 console.log("Department Added!");
+                start();
             });
         });
     }
@@ -127,6 +128,7 @@ const addRole = async () => {
             }, function (error, result) {
                 if (error) throw error;
                 console.log("Role Added!");
+                start();
             });
         });
     }
@@ -185,6 +187,7 @@ const addEmployee = async () => {
             }, function (error, result) {
                 if (error) throw error;
                 console.log("Employee Added!");
+                start();
             });
         })
     }
@@ -198,6 +201,7 @@ const viewDepartment = async () => {
         connection.query("SELECT * FROM department", function (error, results) {
             if (error) throw error;
             console.table(results);
+            start();
         })
     }
     catch (error) {
@@ -209,6 +213,7 @@ const viewRole = async () => {
         connection.query("SELECT * FROM role", function (error, results) {
             if (error) throw error;
             console.table(results);
+            start();
         })
     }
     catch (error) {
@@ -226,6 +231,7 @@ const viewEmployee = async () => {
         connection.query(query, function (error, results) {
             if (error) throw error;
             console.table(results);
+            start();
         });
     }
     catch (error) {
@@ -267,7 +273,8 @@ const updateEmployeeRole = async () => {
             await getEmployeeID();
             connection.query("UPDATE employee SET ? WHERE ?", [{ role_id: roleID }, { id: employeeID }], function (error, result) {
                 if (error) throw error;
-                console.log("employee updated")
+                console.log("employee updated");
+                start();
             });
         });
     }
@@ -276,10 +283,10 @@ const updateEmployeeRole = async () => {
     };
 };
 const main = async () => {
-    try{
+    try {
         await start();
     }
-    catch (error){
+    catch (error) {
         throw error;
     };
 };
