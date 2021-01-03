@@ -45,7 +45,7 @@ const start = async () => {
             name: "action",
             type: "list",
             message: "What would you like to do?",
-            choices: ["Add a Department", "Add a Role", "Add an Employee", "View All Departments", "View All Roles", "View All Employees", "Update Employee Role"]
+            choices: ["Add a Department", "Add a Role", "Add an Employee", "View All Departments", "View All Roles", "View All Employees", "Update Employee Role","End Connection"]
         }).then(async (response) => {
             switch (response.action) {
                 case "Add a Department":
@@ -68,6 +68,8 @@ const start = async () => {
                     break;
                 case "Update Employee Role":
                     await updateEmployeeRole();
+                case "End Connection":
+                    connection.end();
             };
         });
     }
