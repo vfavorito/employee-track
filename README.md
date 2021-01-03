@@ -23,7 +23,7 @@ Here is a link to the Employee Tracker:  [https://github.com/vfavorito/employee-
 Here is a link to an example video using the Employee Tracker:  [Example](https://drive.google.com/file/d/19C2fNI0P2NmeQdfqKM9FWWjLJPXxiv9o/view?usp=sharing)
 
 ### Installation
-Installation of this app first requires the installation of node.  Also you will need to have MySQL installed and a localhost server running.  Next you will have to change the MySql password in the code to your localhost password you set up.  After that install package files using npm i and you are good to go!
+Installation of this app first requires the installation of node.  Also you will need to have MySQL installed and a localhost server running.  You will need to run the schema.sql file either by copy and pasting it into MySQL Workbench or running the file from the command line.  Next you will have to change the MySQL password in the code to your localhost password you set up.  After that install the package files using npm i and you are good to go!
 
 ### Contributing
 If you would like to contribute to the development of this app the guidelines for doing so can be found here: [Contribution Covenant](https://www.contributor-covenant.org/version/2/0/code_of_conduct/code_of_conduct.txt)
