@@ -160,6 +160,12 @@ const addRole = async () => {
 // function that takes user inputs and adds those inputs into the employee table
 const addEmployee = async () => {
     try {
+        const noManager = {
+            id: 0,
+            first_name: "Does Not Have",
+            last_name: "A Manager"
+        };
+        employeeArray.push(noManager);
         await inquirer.prompt([{
             name: "firstName",
             type: "input",
@@ -197,7 +203,10 @@ const addEmployee = async () => {
             // cycles through the employeeArray to find the employee the user selected and grabs that employee's id
             const getManagerID = async () => {
                 employeeArray.forEach((employee) => {
-                    if ((employee.first_name + " " + employee.last_name) === responses.manager) {
+                    if ((employee.first_name + " " + employee.last_name) === "Does Not Have A Manager") {
+                        managerID = null;
+                    }
+                    else if ((employee.first_name + " " + employee.last_name) === responses.manager) {
                         managerID = parseInt(employee.id);
                     };
                 });
