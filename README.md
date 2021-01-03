@@ -19,7 +19,8 @@ After following the installation process for this app, run the command node app.
 View Employees <br/> ![employee table](images/employee-table.PNG) <br/><br/>Add an employee <br/> ![adding employee](images/add-employee.PNG) <br/><br/>View Employees again to see updated table. <br/> ![updated employee table](images/updated-employee-table.PNG) <br/><br/>
 
 ### Example
-Here is a link to the Employee Tracker:  [https://github.com/vfavorito/employee-track](https://github.com/vfavorito/employee-track)
+Here is a link to the Employee Tracker:  [https://github.com/vfavorito/employee-track](https://github.com/vfavorito/employee-track)<br/>
+Here is a link to an example video using the Employee Tracker:  [Example](https://drive.google.com/file/d/19C2fNI0P2NmeQdfqKM9FWWjLJPXxiv9o/view?usp=sharing)
 
 ### Installation
 Installation of this app first requires the installation of node.  Also you will need to have MySQL installed and a localhost server running.  Next you will have to change the MySql password in the code to your localhost password you set up.  After that install package files using npm i and you are good to go!
